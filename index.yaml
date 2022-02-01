@@ -3,9 +3,9 @@ entries:
   goshimmer:
   - apiVersion: v2
     appVersion: v0.8.5
-    created: "2022-02-01T18:48:28.226184799Z"
+    created: "2022-02-01T19:00:26.698525405Z"
     description: IOTA v2.0 node implementation
-    digest: 3617e43cd90fa41630e241e05290cf5b150dc4136c2186b411798e29296ff549
+    digest: 576dc31ce16f4e557df2b49badef86df2c03ba9808c9fcc8417f98a91629cff5
     icon: https://icons.iconarchive.com/icons/cjdowner/cryptocurrency/512/IOTA-icon.png
     name: goshimmer
     type: application
@@ -15,13 +15,13 @@ entries:
   wasp:
   - apiVersion: v2
     appVersion: v0.2.3
-    created: "2022-02-01T18:48:28.359436146Z"
+    created: "2022-02-01T19:00:26.835314836Z"
     description: Node for IOTA Smart Contracts
-    digest: 0fd85164063af04928170e11717ff6b6d458bdd2daa81f9fb5409ac5af2e8a66
+    digest: d1ef8fea88e673847949d85b999750f069c6581a99210a656bc70aa39383f49c
     icon: https://github.com/iotaledger/wasp/raw/master/WASP_logo_dark.png
     name: wasp
     type: application
     urls:
     - https://github.com/hiveroad/helm-charts/releases/download/wasp-0.1.3/wasp-0.1.3.tgz
     version: 0.1.3
-generated: "2022-02-01T18:48:28.077449948Z"
+generated: "2022-02-01T19:00:26.551785832Z"
