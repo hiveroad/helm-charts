@@ -1,0 +1,105 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "wasp.fullname" . -}}
+
+{{- if .Values.ingress.traefik.enabled -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "wasp.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`{{ .Values.ingress.host }}`)
+      services:
+        - name: {{ $fullName }}
+          port: dashboard
+    - kind: Rule
+      match: Host(`api.{{ .Values.ingress.host }}`)
+      services:
+        - name: {{ $fullName }}
+          port: api
+    - kind: Rule
+      match: Host(`nanomsg.{{ .Values.ingress.host }}`)
+      services:
+        - name: {{ $fullName }}
+          port: nanomsg
+    - kind: Rule
+      match: Host(`peering.{{ .Values.ingress.host }}`)
+      services:
+        - name: {{ $fullName }}
+          port: peering
+  tls:
+    certResolver: le
+{{- else -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "wasp.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  name: dashboard
+    - host: api.{{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  name: api
+    - host: nanomsg.{{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  name: nanomsg
+    - host: peering.{{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullName }}
+                port:
+                  name: peering
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+      - {{ .Values.ingress.host }}
+      - api.{{ .Values.ingress.host }}
+      - nanomsg.{{ .Values.ingress.host }}
+      - peering.{{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
+{{- end }}
+{{- end }}

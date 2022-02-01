@@ -1,0 +1,12 @@
+{{- if .Values.ingress.enabled }}
+Open the application by opening:
+  http{{ if .Values.ingress.tls }}s{{ end }}://{{ .Values.ingress.host }}
+Use API:
+  http{{ if .Values.ingress.tls }}s{{ end }}://api.{{ .Values.ingress.host }}
+{{- end }}
+
+Following node ports are reserved:
+  gossip: {{ include "goshimmer.ports.gossip" . }}
+  fpc: {{ include "goshimmer.ports.fpc" . }}
+  txstream: {{ include "goshimmer.ports.txstream" . }}
+  autopeering: {{ include "goshimmer.ports.autopeering" . }}

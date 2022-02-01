@@ -1,0 +1,73 @@
+# Default values for wasp.
+image:
+  repository: ernoaapa/iota-wasp
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  host: chart-example.local
+  tls:
+    enabled: true
+    secretName: chart-example-tls
+
+  traefik:
+    enabled: false
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+replicaCount: 1
+
+wasp:
+  debug: false
+  goshimmerAddress: null # REQUIRED
+  extraArguments: []
+  webapi: { adminWhitelist: [] }
+  dashboard:
+    auth:
+      username: "wasp"
+      password: "wasp"
+  ports:
+    peering: 4000
+    api: 9090
+    dashboard: 7000
+    nanomsg: 5550
+    metrics: 2112

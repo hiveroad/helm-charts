@@ -1,0 +1,7 @@
+apiVersion: v2
+type: application
+name: goshimmer
+description: IOTA v2.0 node implementation
+icon: https://icons.iconarchive.com/icons/cjdowner/cryptocurrency/512/IOTA-icon.png
+version: 0.2.9
+appVersion: "v0.8.5"

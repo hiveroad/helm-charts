@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "goshimmer.fullname" . }}
+  labels:
+    {{- include "goshimmer.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "goshimmer.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        checksum/secrets: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+      labels:
+        {{- include "goshimmer.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "goshimmer.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --skip-config=true
+            - --logger.level={{ .Values.goshimmer.debug | ternary "debug" "info" }}
+            - --node.enablePlugins={{ join "," .Values.goshimmer.enablePlugins }}
+            - --node.disablePlugins={{ join "," .Values.goshimmer.disablePlugins }}
+            - --dashboard.basicAuth.enabled={{ .Values.goshimmer.dashboard.auth.enabled }}
+            {{- range .Values.goshimmer.extraArguments }}
+            - {{ . }}
+            {{- end }}
+          ports:
+            - name: api
+              containerPort: {{ include "goshimmer.ports.api" . }}
+            - name: dashboard
+              containerPort: {{ include "goshimmer.ports.dashboard" . }}
+            - name: profiling
+              containerPort: {{ include "goshimmer.ports.profiling" . }}
+            - name: prometheus
+              containerPort: {{ include "goshimmer.ports.prometheus" . }}
+            - name: autopeering
+              protocol: UDP
+              containerPort: {{ include "goshimmer.ports.autopeering" . }}
+            - name: gossip
+              containerPort: {{ include "goshimmer.ports.gossip" . }}
+            - name: fpc
+              containerPort: {{ include "goshimmer.ports.fpc" . }}
+            - name: txstream
+              containerPort: {{ include "goshimmer.ports.txstream" . }}
+          env:
+          - name: WEBAPI_BINDADDRESS
+            value: 0.0.0.0:{{ include "goshimmer.ports.api" . }}
+          - name: DASHBOARD_BINDADDRESS
+            value: 0.0.0.0:{{ include "goshimmer.ports.dashboard" . }}
+          - name: PROFILING_BINDADDRESS
+            value: 0.0.0.0:{{ include "goshimmer.ports.profiling" . }}
+          - name: PROMETHEUS_BINDADDRESS
+            value: 0.0.0.0:{{ include "goshimmer.ports.prometheus" . }}
+          - name: AUTOPEERING_BINDADDRESS
+            value: 0.0.0.0:{{ include "goshimmer.ports.autopeering" . }}
+          - name: GOSSIP_BINDADDRESS
+            value: 0.0.0.0:{{ include "goshimmer.ports.gossip" . }}
+          - name: FPC_BINDADDRESS
+            value: 0.0.0.0:{{ include "goshimmer.ports.fpc" . }}
+          - name: TXSTREAM_BINDADDRESS
+            value: 0.0.0.0:{{ include "goshimmer.ports.txstream" . }}
+          - name: GIN_MODE
+            value: {{ .Values.goshimmer.debug | ternary "debug" "release" }}
+          {{- if .Values.goshimmer.seedSecretName }}
+          - name: NODE_SEED
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.goshimmer.seedSecretName }}
+                key: seed
+          {{- end }}
+
+          {{- if .Values.goshimmer.dashboard.auth.enabled }}
+          - name: DASHBOARD_AUTH_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "goshimmer.fullname" . }}-dashboard-credentials
+                key: username
+          - name: DASHBOARD_AUTH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "goshimmer.fullname" . }}-dashboard-credentials
+                key: password
+          {{- end }}
+          # TODO:
+          # At the moment, the http endpoint become active after the autopeering but it requires inbound connection.
+          # livenessProbe:
+          #   httpGet:
+          #     path: /info
+          #     port: 8080
+          #   failureThreshold: 10
+          # readinessProbe:
+          #   httpGet:
+          #     path: /healthz
+          #     port: 8080
+          #   failureThreshold: 1000
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /tmp/mainnetdb
+              name: database
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: database
+        {{- if .Values.persistence.enabled}}
+          persistentVolumeClaim:
+            claimName: {{ include "goshimmer.fullname" . }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}

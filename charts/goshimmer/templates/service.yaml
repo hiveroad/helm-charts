@@ -1,0 +1,69 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "goshimmer.fullname" . }}
+  labels:
+    app.kubernetes.io/component: http
+    {{- include "goshimmer.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "goshimmer.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: dashboard
+      port: 8081
+      targetPort: dashboard
+    - name: api
+      port: 8080
+      targetPort: api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "goshimmer.fullname" . }}-network
+  labels:
+    app.kubernetes.io/component: network
+    {{- include "goshimmer.labels" . | nindent 4 }}
+spec:
+  type: NodePort
+  selector:
+    {{- include "goshimmer.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: gossip
+      port: 14666
+      nodePort: {{ include "goshimmer.ports.gossip" . }}
+      targetPort: gossip
+    - name: fpc
+      port: 10895
+      nodePort: {{ include "goshimmer.ports.fpc" . }}
+      targetPort: fpc
+    - name: txstream
+      port: 5000
+      nodePort: {{ include "goshimmer.ports.txstream" . }}
+      targetPort: txstream
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "goshimmer.fullname" . }}-network-udp
+  labels:
+    app.kubernetes.io/component: network-udp
+    {{- include "goshimmer.labels" . | nindent 4 }}
+spec:
+  type: NodePort
+  selector:
+    {{- include "goshimmer.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: autopeering
+      port: 14626
+      nodePort: {{ include "goshimmer.ports.autopeering" . }}
+      protocol: UDP
+      targetPort: autopeering
+  # Without this the autopeering fails at boot.
+  # The autopeering validates that the "PONG" UDP package
+  # has same IP as the payload. Kubernetes, by default,
+  # set the node IP as source where the request lands
+  # as explained here:
+  # https://blog.getambassador.io/externaltrafficpolicy-local-on-kubernetes-e66e498212f9
+  externalTrafficPolicy: Local

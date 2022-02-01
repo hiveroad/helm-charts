@@ -1,0 +1,90 @@
+# Default values for goshimmer.
+image:
+  repository: iotaledger/goshimmer
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# By default Goshimmer have 120s termination so keep this longer than that
+terminationGracePeriodSeconds: 150
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+persistence:
+  ## @param persistence.enabled Enable persistence using PVC
+  ##
+  enabled: false
+  storageClassName: local-path
+  size: 40Gi
+
+## @param portBase - Do not use default port numbers, but use port numbers incrementing from the @param portBase.
+## If 0 value, uses default port numbers.
+portBase: 0
+
+ingress:
+  enabled: false
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  className: ""
+  host: chart-example.local
+  tls:
+    enabled: true
+    secretName: chart-example-tls
+  traefik:
+    enabled: false
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+goshimmer:
+  debug: false
+
+  # To use static GoShimmer identity, generate a random 32byte autopeering seed
+  # and place it in a Secret with key "seed" and fill the secret name here
+  # See: https://goshimmer.docs.iota.org/docs/tutorials/static_identity
+  seed: null
+  seedSecretName: ""
+
+  enablePlugins:
+    - networkdelay
+    - spammer
+    - prometheus
+  disablePlugins: []
+  extraArguments: []
+
+  dashboard:
+    auth:
+      enabled: true
+      username: "goshimmer"
+      password: "goshimmer"

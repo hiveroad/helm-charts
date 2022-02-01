@@ -1,0 +1,7 @@
+apiVersion: v2
+type: application
+name: wasp
+description: Node for IOTA Smart Contracts
+icon: https://github.com/iotaledger/wasp/raw/master/WASP_logo_dark.png
+version: 0.1.3
+appVersion: "v0.2.3"

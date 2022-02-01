@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "wasp.fullname" . }}
+  labels:
+    {{- include "wasp.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "wasp.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  podManagementPolicy: "Parallel"
+  selector:
+    matchLabels:
+      {{- include "wasp.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/secrets: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+      labels:
+        {{- include "wasp.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "wasp.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --skip-config=true
+            - --logger.level={{ .Values.wasp.debug | ternary "debug" "info" }}
+            - --logger.outputPaths=stdout
+            - --database.inMemory=true # TODO: Support persisted database via Kubernetes Persisted Volumes
+            - --webapi.bindAddress=0.0.0.0:{{ .Values.wasp.ports.api }}
+            - --dashboard.bindAddress=0.0.0.0:{{ .Values.wasp.ports.dashboard }}
+            - --metrics.bindAddress=0.0.0.0:{{ .Values.wasp.ports.metrics }}
+            - --metrics.enabled=true
+            - --peering.netid={{- include "wasp.netid" . }}
+            - --peering.neighbors={{- include "wasp.neighbors" . }}
+            - --peering.port={{ .Values.wasp.ports.peering }}
+            - --webapi.adminWhitelist={{ join "," .Values.wasp.webapi.adminWhitelist }}
+            {{- range .Values.wasp.extraArguments }}
+            - {{ . }}
+            {{- end }}
+          ports:
+            - name: api
+              containerPort: {{ .Values.wasp.ports.api }}
+            - name: dashboard
+              containerPort: {{ .Values.wasp.ports.dashboard }}
+            - name: nanomsg
+              containerPort: {{ .Values.wasp.ports.nanomsg }}
+            - name: peering
+              protocol: UDP
+              containerPort: {{ .Values.wasp.ports.peering }}
+            - name: metrics
+              containerPort: {{ .Values.wasp.ports.metrics }}
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: NANOMSG_PORT
+            value: "5550"
+          - name: PEERING_PORT
+            value: "4000"
+          - name: NODECONN_ADDRESS
+            value: {{ required "You must give target goshimmer hostname" .Values.wasp.goshimmerAddress }}
+          - name: DASHBOARD_AUTH_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "wasp.fullname" . }}-dashboard-credentials
+                key: username
+          - name: DASHBOARD_AUTH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "wasp.fullname" . }}-dashboard-credentials
+                key: password
+          livenessProbe:
+            httpGet:
+              path: /info
+              port: 9090
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /info
+              port: 9090
+            failureThreshold: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

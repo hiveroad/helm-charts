@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "wasp.fullname" . }}
+  labels:
+    app.kubernetes.io/component: http
+    {{- include "wasp.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "wasp.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: dashboard
+      port: 7000
+      targetPort: dashboard
+    - name: api
+      port: 9090
+      targetPort: api
+    - name: nanomsg
+      port: 5550
+      targetPort: nanomsg
+    - name: peering
+      port: 4000
+      protocol: UDP
+      targetPort: peering
