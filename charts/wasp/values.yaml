@@ -58,9 +58,9 @@ replicaCount: 1
 
 wasp:
   debug: false
-  goshimmerAddress: null # REQUIRED
+  goshimmerAddress: null  # REQUIRED
   extraArguments: []
-  webapi: { adminWhitelist: [] }
+  webapi: {adminWhitelist: []}
   dashboard:
     auth:
       username: "wasp"

@@ -30,9 +30,13 @@ persistence:
   storageClassName: local-path
   size: 40Gi
 
-## @param portBase - Do not use default port numbers, but use port numbers incrementing from the @param portBase.
-## If 0 value, uses default port numbers.
-portBase: 0
+service:
+  type: ClusterIP
+  ## Configurations that apply only if type=NodePort
+  nodePort:
+    ## @param portBase - Do not let Kubernetes select port numbers, but use port numbers incrementing from the @param portBase.
+    ## If 0 value, Kubernetes select random node ports.
+    portBase: 0
 
 ingress:
   enabled: false

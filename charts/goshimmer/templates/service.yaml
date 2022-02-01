@@ -26,21 +26,27 @@ metadata:
     app.kubernetes.io/component: network
     {{- include "goshimmer.labels" . | nindent 4 }}
 spec:
-  type: NodePort
+  type: {{ .Values.service.type }}
   selector:
     {{- include "goshimmer.selectorLabels" . | nindent 4 }}
   ports:
     - name: gossip
       port: 14666
+      {{- if and .Values.service.type (gt (int .Values.portBase) 0) }}
       nodePort: {{ include "goshimmer.ports.gossip" . }}
+      {{- end }}
       targetPort: gossip
     - name: fpc
       port: 10895
+      {{- if and .Values.service.type (gt (int .Values.portBase) 0) }}
       nodePort: {{ include "goshimmer.ports.fpc" . }}
+      {{- end }}
       targetPort: fpc
     - name: txstream
       port: 5000
+      {{- if and .Values.service.type (gt (int .Values.portBase) 0) }}
       nodePort: {{ include "goshimmer.ports.txstream" . }}
+      {{- end }}
       targetPort: txstream
 ---
 apiVersion: v1
@@ -51,15 +57,18 @@ metadata:
     app.kubernetes.io/component: network-udp
     {{- include "goshimmer.labels" . | nindent 4 }}
 spec:
-  type: NodePort
+  type: {{ .Values.service.type }}
   selector:
     {{- include "goshimmer.selectorLabels" . | nindent 4 }}
   ports:
     - name: autopeering
       port: 14626
+      {{- if and .Values.service.type (gt (int .Values.portBase) 0) }}
       nodePort: {{ include "goshimmer.ports.autopeering" . }}
+      {{- end }}
       protocol: UDP
       targetPort: autopeering
+  {{- if eq .Values.service.type "NodePort" }}
   # Without this the autopeering fails at boot.
   # The autopeering validates that the "PONG" UDP package
   # has same IP as the payload. Kubernetes, by default,
@@ -67,3 +76,4 @@ spec:
   # as explained here:
   # https://blog.getambassador.io/externaltrafficpolicy-local-on-kubernetes-e66e498212f9
   externalTrafficPolicy: Local
+ {{- end }}
