@@ -3,6 +3,21 @@ entries:
   goshimmer:
   - apiVersion: v2
     appVersion: v0.8.5
+    created: "2022-02-02T18:25:50.702186439Z"
+    description: IOTA v2.0 node implementation
+    digest: 04e998dd5aa7433791a1d6846285b48aa672338a00cdbee81474565c5c37cb60
+    icon: https://icons.iconarchive.com/icons/cjdowner/cryptocurrency/512/IOTA-icon.png
+    maintainers:
+    - email: erno.aapa@gmail.com
+      name: ernoaapa
+      url: https://hiveroad.io
+    name: goshimmer
+    type: application
+    urls:
+    - https://github.com/hiveroad/helm-charts/releases/download/goshimmer-0.2.10/goshimmer-0.2.10.tgz
+    version: 0.2.10
+  - apiVersion: v2
+    appVersion: v0.8.5
     created: "2022-02-01T19:00:26.698525405Z"
     description: IOTA v2.0 node implementation
     digest: 576dc31ce16f4e557df2b49badef86df2c03ba9808c9fcc8417f98a91629cff5
@@ -13,6 +28,21 @@ entries:
     - https://github.com/hiveroad/helm-charts/releases/download/goshimmer-0.2.9/goshimmer-0.2.9.tgz
     version: 0.2.9
   wasp:
+  - apiVersion: v2
+    appVersion: v0.2.3
+    created: "2022-02-02T18:25:50.916572627Z"
+    description: Node for IOTA Smart Contracts
+    digest: 9afbefa979fc1f3b124b6c9635f768ace114ffdb4aa4a536eb431eac1dd26fd2
+    icon: https://github.com/iotaledger/wasp/raw/master/WASP_logo_dark.png
+    maintainers:
+    - email: erno.aapa@gmail.com
+      name: ernoaapa
+      url: https://hiveroad.io
+    name: wasp
+    type: application
+    urls:
+    - https://github.com/hiveroad/helm-charts/releases/download/wasp-0.1.4/wasp-0.1.4.tgz
+    version: 0.1.4
   - apiVersion: v2
     appVersion: v0.2.3
     created: "2022-02-01T19:00:26.835314836Z"
