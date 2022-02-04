@@ -62,30 +62,30 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Goshimmer port numbers base on portbase or fallback to defaults
+Goshimmer port numbers base on portbase if nodeport service or fallback to default port numbers
 */}}
 
 {{- define "goshimmer.ports.api" -}}
-{{- gt (int .Values.portBase) 0 | ternary (add .Values.portBase 1) 8080 }}
+{{- eq .Values.service.type "NodePort" | ternary (add .Values.service.nodePort.portBase 1) 8080 }}
 {{- end }}
 {{- define "goshimmer.ports.dashboard" -}}
-{{- gt (int .Values.portBase) 0 | ternary (add .Values.portBase 2) 8081 }}
+{{- eq .Values.service.type "NodePort" | ternary (add .Values.service.nodePort.portBase 2) 8081 }}
 {{- end }}
 {{- define "goshimmer.ports.profiling" -}}
-{{- gt (int .Values.portBase) 0 | ternary (add .Values.portBase 3) 6061 }}
+{{- eq .Values.service.type "NodePort" | ternary (add .Values.service.nodePort.portBase 3) 6061 }}
 {{- end }}
 {{- define "goshimmer.ports.prometheus" -}}
-{{- gt (int .Values.portBase) 0 | ternary (add .Values.portBase 4) 9311 }}
+{{- eq .Values.service.type "NodePort" | ternary (add .Values.service.nodePort.portBase 4) 9311 }}
 {{- end }}
 {{- define "goshimmer.ports.autopeering" -}}
-{{- gt (int .Values.portBase) 0 | ternary (add .Values.portBase 5) 14626 }}
+{{- eq .Values.service.type "NodePort" | ternary (add .Values.service.nodePort.portBase 5) 14626 }}
 {{- end }}
 {{- define "goshimmer.ports.gossip" -}}
-{{- gt (int .Values.portBase) 0 | ternary (add .Values.portBase 6) 14666 }}
+{{- eq .Values.service.type "NodePort" | ternary (add .Values.service.nodePort.portBase 6) 14666 }}
 {{- end }}
 {{- define "goshimmer.ports.fpc" -}}
-{{- gt (int .Values.portBase) 0 | ternary (add .Values.portBase 7) 10895 }}
+{{- eq .Values.service.type "NodePort" | ternary (add .Values.service.nodePort.portBase 7) 10895 }}
 {{- end }}
 {{- define "goshimmer.ports.txstream" -}}
-{{- gt (int .Values.portBase) 0 | ternary (add .Values.portBase 8) 5000 }}
+{{- eq .Values.service.type "NodePort" | ternary (add .Values.service.nodePort.portBase 8) 5000 }}
 {{- end }}
