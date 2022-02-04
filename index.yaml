@@ -3,6 +3,21 @@ entries:
   goshimmer:
   - apiVersion: v2
     appVersion: v0.8.5
+    created: "2022-02-04T21:26:52.718570841Z"
+    description: IOTA v2.0 node implementation
+    digest: 0f69cb06701b5f1130ae9d5aedbc901fe76914f6448f225a99182818e6b3988f
+    icon: https://icons.iconarchive.com/icons/cjdowner/cryptocurrency/512/IOTA-icon.png
+    maintainers:
+    - email: erno.aapa@gmail.com
+      name: ernoaapa
+      url: https://hiveroad.io
+    name: goshimmer
+    type: application
+    urls:
+    - https://github.com/hiveroad/helm-charts/releases/download/goshimmer-0.2.11/goshimmer-0.2.11.tgz
+    version: 0.2.11
+  - apiVersion: v2
+    appVersion: v0.8.5
     created: "2022-02-02T18:25:50.702186439Z"
     description: IOTA v2.0 node implementation
     digest: 04e998dd5aa7433791a1d6846285b48aa672338a00cdbee81474565c5c37cb60
