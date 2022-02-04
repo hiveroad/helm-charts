@@ -30,7 +30,7 @@ spec:
             - --skip-config=true
             - --logger.level={{ .Values.goshimmer.debug | ternary "debug" "info" }}
             - --node.enablePlugins={{ join "," .Values.goshimmer.enablePlugins }}
-            - --node.disablePlugins={{ join "," .Values.goshimmer.disablePlugins }}
+            - --node.disablePlugins={{ join "," (.Values.goshimmer.autopeering.enabled | ternary .Values.goshimmer.disablePlugins (append .Values.goshimmer.disablePlugins "autopeering")) }}
             - --dashboard.basicAuth.enabled={{ .Values.goshimmer.dashboard.auth.enabled }}
             {{- range .Values.goshimmer.extraArguments }}
             - {{ . }}

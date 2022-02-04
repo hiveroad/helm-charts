@@ -1,4 +1,0 @@
-service:
-  type: NodePort
-  nodePort:
-    portBase: 30100

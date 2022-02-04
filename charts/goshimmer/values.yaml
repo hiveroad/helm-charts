@@ -31,12 +31,14 @@ persistence:
   size: 40Gi
 
 service:
-  type: ClusterIP
+  type: NodePort
   ## Configurations that apply only if type=NodePort
   nodePort:
-    ## @param portBase - Do not let Kubernetes select port numbers, but use port numbers incrementing from the @param portBase.
-    ## If 0 value, Kubernetes select random node ports.
-    portBase: 0
+    ## The goshimmer announce the same port number that it listens, we cannot let
+    ## the Kubernetes select the nodePort but rather we select it and use the same
+    ## port number inside the container.
+    ## @param portBase - Is the base number where we select port numbers by incrementing the port numbers.
+    portBase: 30000
 
 ingress:
   enabled: false
@@ -92,3 +94,6 @@ goshimmer:
       enabled: true
       username: "goshimmer"
       password: "goshimmer"
+
+  autopeering:
+    enabled: true
