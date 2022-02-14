@@ -47,6 +47,11 @@ To uninstall the goshimmer chart:
 
 ### Goshimmer FAQ
 
+#### The node started to crash and don't start up anymore
+
+First check is there new [Goshimmer release done lately](https://github.com/iotaledger/goshimmer/releases). The versions are not backward compatible and can be that the peer nodes you're connected, are upgraded and don't accept you anymore.
+Before the Goshimmer helm chart get updated, you can use ` --app-version=<new version here>` parameter with `helm upgrade` to install the latest version.
+
 #### You get an error “Please check that GoShimmer is publicly reachable at port ….”
 
 The Goshimmer requires that the node be accessible from the public internet, and the Helm deployment uses the Service NodePorts to provide a port number to which other peers can connect.
