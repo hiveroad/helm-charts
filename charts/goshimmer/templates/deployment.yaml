@@ -81,12 +81,12 @@ spec:
           {{- end }}
 
           {{- if .Values.goshimmer.dashboard.auth.enabled }}
-          - name: DASHBOARD_AUTH_USERNAME
+          - name: DASHBOARD_BASICAUTH_USERNAME
             valueFrom:
               secretKeyRef:
                 name: {{ include "goshimmer.fullname" . }}-dashboard-credentials
                 key: username
-          - name: DASHBOARD_AUTH_PASSWORD
+          - name: DASHBOARD_BASICAUTH_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ include "goshimmer.fullname" . }}-dashboard-credentials

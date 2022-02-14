@@ -3,8 +3,8 @@ type: application
 name: goshimmer
 description: IOTA v2.0 node implementation
 icon: https://icons.iconarchive.com/icons/cjdowner/cryptocurrency/512/IOTA-icon.png
-version: 0.2.11
-appVersion: "v0.8.5"
+version: 0.2.14
+appVersion: "v0.8.6"
 maintainers:
   - name: ernoaapa
     email: erno.aapa@gmail.com

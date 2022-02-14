@@ -14,7 +14,7 @@ metadata:
   {{- end }}
 spec:
   entryPoints:
-    - websecure
+    - {{ .Values.ingress.tls.enabled | ternary "websecure" "web" }}
   routes:
     - kind: Rule
       match: Host(`{{ .Values.ingress.host }}`)
@@ -26,8 +26,10 @@ spec:
       services:
         - name: {{ $fullName }}
           port: api
+  {{- if .Values.ingress.tls.enabled }}
   tls:
     certResolver: le
+  {{- end }}
 {{- else -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
